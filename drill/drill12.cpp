@@ -67,7 +67,6 @@ try {
     poly_rect.add(Point{200, 100});
     poly_rect.add(Point{100, 100});
     poly_rect.add(Point{50, 75});
-    poly_rect.add(Point{600, 90});
     win.attach(poly_rect);
 
     win.set_label("My window #6");
@@ -107,4 +106,4 @@ catch(...) {
     return 2;
 }
 
-//g++ drill.cpp Graph.cpp Window.cpp GUI.cpp Simple_window.cpp -o drill12 `fltk-config --ldflags --use-images`
+//g++ drill12.cpp Graph.cpp Window.cpp GUI.cpp Simple_window.cpp -o drill12 `fltk-config --ldflags --use-images`
