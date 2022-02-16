@@ -1,0 +1,9 @@
+FLTK Install:
+sudo apt install libfltk1.3-dev
+
+Gui: rbesenczi/Prog1 - week02-06/GUI
+
+g++ main.cpp Graph.cpp Window.cpp GUI.cpp Simple_window.cpp -o main `fltk-config --ldflags --use-images`
+
+git config user.name {username}
+git config user.email {email}
