@@ -1,0 +1,97 @@
+(define (sum lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+            (define fej (first lst))    ;ha nem üres a lista szetszedem fejre és farokra
+            (define farok (rest lst))
+            (define farok-ertek (sum farok)) ; meghívom önmagam reku a farokra
+            (+ fej farok-ertek)]))
+            
+; (paros-sum lst) lstben levo paros szamok összege
+; hint: (even? x) igazat ad ha x páros
+
+(define (psum lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (psum farok))
+            (if (even? fej) (+ fej farok-ertek) farok-ertek)]))
+            
+(writeln (psum (list 1 2 3 4))) ;6
+
+(define (osum lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (osum farok))
+            (if (odd? fej) (+ fej farok-ertek) farok-ertek)]))
+            
+(writeln (osum (list 1 2 3 4))) ;4
+
+; (feltételes-sum feltétel lst) lstben lévő számok közül azokat adja vissza amire a feltétel igaz
+; feltételes lehet pl az odd? even? vagy minden ami számot vár és igaz/hamist ad vissza
+; tehát az első param egy fgv
+
+; (my-max lst) lstben levo legnagyíobb eloemet adja vissza
+; üres lstnek nincs max -> voidot ad vissza
+; egy elmü lst legnagyobb eleme, azaz az egy eleme, pl: (my-max (list 6)) = 6
+; hint: (= 1 (lenght lst)) ha igazat ad akkor 1 elem
+; ha nem 1 elem akkor szétszedjük fejre és farokra
+
+(define (mymax lst)
+    (cond
+        [(empty? lst) (void)]
+        [(= 1 (length lst)) (first lst)]
+        [else 
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (mymax farok))
+            (if (> fej farok-ertek) fej farok-ertek)]))
+            
+(writeln (mymax (list 2 5 1 8))) ;8
+
+; evenmax
+; hint (filter even? (list 1 2 3 4 5))
+
+(define (evenmax lst)
+    (mymax (filter even? lst)))
+
+; filter nelkul tul bonyolult
+
+(writeln (evenmax (list 2 5 9 8)))
+
+; (odd-filter lst) visszaadja a listát amiben az lstben lévő páratlan számok vannak
+; itt nem szabad filtert használni
+; hint cons (cons fej farok)
+; szemantikája: csinál egy új listát aminek a feje a fej farka a farok
+
+(define (oddfilter lst)
+    (cond
+        [(empty? lst) lst]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (oddfilter farok))
+            (if (odd? fej) (cons fej farok-ertek) farok-ertek)]))
+            
+(writeln (oddfilter (list 1 2 3 4 5)))
+
+(define (nagyobb-mint-5 x) (> x 5))
+
+;(define (nagyobbfilter lst)
+;    (cond
+;        [(empty? lst) lst]
+;        [else
+;            (define fej (first lst))
+;            (define farok (rest lst))
+;            (define farok-ertek (nagyobbfilter farok))
+;            (if (nagyobb-mint-5 lst) (cons fej farok-ertek) farok-ertek)]))
+            
+;(writeln (nagyobbfilter (list 3 4 5 6 7)))
+; valamit hibat dob idk mivan
+
+; (myappend (list "alma" "béka") (listb 1 2 3)) = (list "alma" "béka" 1 2 3) 
