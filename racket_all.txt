@@ -1,0 +1,782 @@
+; random összemásolt
+
+(define x 5.2)        ; definialom az x-et, x erteke legyen 5
+(writeln (string? x))         ; kiiratom az x kifejezeserteket
+(define f (lambda (x) (+ x 1)))
+(writeln (f 5))
+
+(define inc(lambda (x) (+ x 1)))
+(writeln(inc 5))
+
+;inoerder b gy j
+;preorder gy b j 
+;postorder b j gy
+
+(define dec(lambda(x) (- x 1)))
+(writeln(dec 5))
+
+;fgv hivas: (fgnev aktualis param lista)
+
+;define 2. valtozata
+
+;(define (fgnev formalis_param_lista) kifejezesek)
+
+(define (negyzet x)  (* x x))
+
+(writeln (negyzet 5))
+
+(define (koszon x)  (string-append "Hello " x))
+
+(writeln (koszon "Anna"))
+
+; if szintaxisa 
+;(if (logikai_kif) ha igaz kif ha hamis kif
+(define (max2 x y) 
+    (if (> x y) 
+    x 
+    y))
+    
+; mellekhatas amikor egy fgv megvaltoztatja a kornyezetet azaz: globalis valtozonak erteket ad,kepernyore ir,fileba ir, printerre ir stb..
+
+(define (max3 x y z) (max2 (max2 x y) z))
+    
+(writeln (max2 3 6))
+(writeln (max3 3 6 5))
+
+(define(max4 x y z c) (max2 (max3 x y z) c))
+
+(writeln (max4 3 6 5 12))
+
+(define (max4 a b c d) (define reszeredmeny (max3 a b c)) (max2 reszeredmeny d))
+
+(writeln (max4 3 6 5 12))
+
+(define (max5 a b c d e) (define reszeredmeny (max4 a b c d)) (max2 reszeredmeny e))
+
+(writeln (max5 3 6 5 15 12))
+
+(define (hosszabbnev x y) 
+(if (> (string-length x)  (string-length y)) 
+    x 
+    y))
+    
+(writeln (hosszabbnev "Anna" "Krisztian"))
+
+(define (nagybetus x y) 
+(if x 
+    (string-upcase y) 
+    (string-downcase y) 
+    ))
+(writeln (nagybetus true "Papa"))
+    
+-----------------------------------------------------------------------------
+
+(define (inc x) (+ x 1))
+
+(define (myfor p x)
+    (if (p x)
+        (writeln x)
+        void)
+    (if (< x 100)           ; bazis feltetel
+        (myfor p (inc x))     ; most az igaz agnal
+        void))              ; hamis agnal nem lehet!!
+    
+(myfor even? 1)
+
+;(prim? x)
+;ez kap egy szamot es vissza ad egy logaika erteket, igaz, ha x prim, hamis ha x nem prim
+;egyebkent (otherwise) 
+;szoval ez egy sima primteszt
+;2tol a szam gyokeig inditok egy ciklust ha barmelyik osztja akkor false kulonben true
+
+(define (prim? x)
+    (define gyok (sqrt x))
+    (if (= x 1)
+        false
+        (prim2 x 2 gyok)
+    )
+)
+
+(define (prim2 x i gyok)
+    (if(<= i gyok)
+        (if(= (modulo x i) 0)
+            false
+            (prim2 x (+ i 1) gyok)
+        )
+        true
+    )
+)
+                    
+
+(writeln (prim? 5))
+
+;azt mondjuk h egy fgv rekurziv, ha magat hivja meg, f rek ha f hivja f-et
+; imperativ oldalon a vegtelen rekurzio stackoverflow (verem tulcsordulast) hibat eredmenyez
+;mert minden fg hivas elott a lokalis valtozokat es a resgiszterek tartalmat a vermbe menti
+;es mivel ez vegtelen sokszor megtoretnik ezert elobb utobb elfogy a stack
+
+; deklarativba miert nem fogyott el?
+;azert mnert a farok rekurziv fg-t irok, akkor abbol a futtato keretrendszer ciklust fordit
+;Def(farok reku fg): Azt mondom hogy az f fg. farok rekurziv, <=> ha, 
+;az utolso hivas a rekurziv hivas
+
+;if syntaxisa
+; (if (logikai kif) igaz-ag-kif hamis-ag-kif)
+;kifejezes expression
+;milye van egy kifejezesnek?: tipus/ertek
+
+;Kifejezes fajtai:  literal, pl.: 1,"alma",3.14
+;                   konstans: const int x = 1
+;                   valtozo: int i = 4
+;                   operatoros: 1+1
+;                   fg hivas: Math.max(5,1)
+; A if definicioja rekurziv
+; Az xyz szimbolus sorozat kifejezes <=>
+;a) xyz egy literal vagy
+;b) xyz egy konstans vagy
+;c) xyz egy valtozo vagy
+;d) xyz egy operator hivas p1,p2 parameterkkel, ahol p1 egy kif, p2 egy kif vagy
+;e) xyz egy fgv hivas p1,p2 parameterekkel,ahol p1,p2 egy kifejezes
+
+; Bazis feltetel: Minden rekurziohoz kell egy bazis feltetel , egyebkent vegtelen lesz
+; a bazis feltetel, egyik agan a rekurziv hivas, a masikon nem lehet rekurziv hivas
+;a bazis feltetel feladata, hogy megallatisa a rekurzivitast
+
+---------------------------------------------------------------------------------
+
+(writeln (list 1 "alma" 3.14 true ))
+
+;lista literal szintaxisa
+;(list lista-elemei)
+
+(writeln(list 1 2 3 ))
+(writeln (list (list "alma" "korte") 3))
+
+;lista kezeles
+;first visszaadja a lista elso elemet, amit fejnek is szoktunk hivni
+;rest visszaadja a maradekot, farok
+
+(define x (list 1 2 2 5))
+
+(writeln (rest (list 1 2 2 5)))
+(writeln (rest (list 1 2 2)))
+(writeln (rest (list 1 2)))
+(writeln (rest (list 1)))
+
+;a lista fejbol es farokbol all
+; a lista feje az az elso elem
+; a lista farka a maradek
+; a lista farka mindig lista
+; az 1 elemu lista farka ures lista
+; az ures listanak nincs farka
+; listat a cons nevu construktorral hozod letre.
+; cons-nak 2 hasznalata van:
+; (cons elem elem) - egy part keszit
+; (cons elem lista) - egy listat keszit aminek a feje az elem, a farka a lista
+
+(writeln (cons 1 (list 2 3)))
+(writeln (cons "alma" (list "korte")))
+(writeln (cons "alma" "korte"))
+; parokra 2 beepitett fgv van: car, cdr
+; car visszaadja a par elso elemet
+; cdr visszaadja a par masodik elemet
+(writeln 5)
+(writeln (cddr (list 1 2 3 4)))
+
+;miert mukodik?
+; a lista legbelul egy fej es farkabol allo par
+
+(writeln (+ 2 3))
+
+(writeln (2 . + . 3))
+
+;focim: Listakezeles
+;alcim: a lista adatszerkezet
+;Ha barmikor talalkozol egy uj adatszerkezettel, akkor a kov kerdesket kell feltenni:
+
+; 1. egyszeru vagy osszetett?(ha osszetett akkor jon a tobbi kerdes)
+; 2. homogen v inhomogen
+; 3. folyotonos v szetszort a memoriaban
+; 4. soros (szekvencialis) v direkt (asszociativ)
+; 5. rekurziv v sem
+
+;egyszeru ha 1 elem,, osszetett tobb
+;homogen ha csak 1 tipusut lehet hasznalni  , inhomogen barmit lehet bele tenni
+;folyotonos: memoriaban folyotosan kovetik egymast, szetszort : ossze vissza vannak a memoriaba
+;soros: a haramadik elemet csak akkor tudom ha az elsot aztan a masodikat, direkt: barmelyik elemet elerhetjuk
+;rekurziv: egy adatszerkezet rekurziv, ha egy osszefuggo resze ugyanolyan tipusu mint az egesz (pl binaris fa)
+
+;lista: osszetett,deklarativ oldalon: inhomogen, soros hozzaferesu,rakurziv,mivel a lista farka lista
+
+;rekurziv adatszerkezetet rekurzivan dolgozok fel;
+
+;lesz bazis feltetel, ures-e a lista
+;ha nem szetszedem fejre es farokra
+;meghivom onmagamat reu-an a farokra
+
+;racket 2 felteteles (conditional) kif van
+;-if, ket agu
+;-cond, tobb agu
+
+;cond szintaxisa: (cond [ag1] [ag2] ... [else if])
+; ahol ag szintaxisa : [logikai-kif kif)
+;pelda
+
+(define (get-tipus x)
+    (cond
+    [(null? x) "ures lisa"]
+    [(list? x) "lista"]
+    [(number? x) "szam"]
+    [(string? x) "szoveg"]                                              
+    [(pair? x) "par"]
+    [(boolean? x) "igaz/hamis"]
+    [else           "ismeretlen"]))
+    
+;a legelso illeszkedo ag fut le
+       
+(writeln (get-tipus 11))
+(writeln (get-tipus null))
+(writeln (get-tipus (list 1 2 3)))
+(writeln (get-tipus "Papa"))
+(writeln (get-tipus #t))
+(writeln (get-tipus '(2 . 5)))
+(writeln (get-tipus +))
+
+(writeln (empty? (list )))
+(writeln (null? (list )))
+
+(define (mylength lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+        ;szetszedem fejre es farokra
+        (define fej (first lst))
+        (define farok(rest lst))
+        ;meghivom onmagam a farokra, amit kapok ertekul, azt farokerteknek hivjak
+        (define farok-ertek (mylength farok))
+        ; a fejbol es a farok-ertekbol szamolom a vegeredmenyt
+        ;hogy hogyan az feladat fuggo
+        ;tipp: csinalj egy peldat
+        ;(mylength list (1 "alma" 2)) = 3 = farok-ertek + 1;
+        ;(mylength list ("alma" 2)) = 3
+        ;(mylength list (2)) = 3
+        (+ 1 farok-ertek)]))
+        
+(writeln (mylength (list 1 "alma" 2)))
+
+(define (szum lst)
+    (cond
+        [(empty? lst) 0]
+        [else 
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek (szum farok))
+        (+ fej farok-ertek)]))
+
+(writeln (szum (list 5 6 2)))
+
+---------------------------------------------------------------------------------------
+
+(define (szum lst)
+    (cond
+        [(empty? lst) 0]
+        [else 
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek (szum farok))
+        (+ fej farok-ertek)]))
+        
+;paros sum lst(az lstben levo paros szamok)
+
+(define (addparos lst)
+    (cond
+    [(empty? lst) 0]
+    [else
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek (addparos farok))
+        (+ 
+        (if(= (modulo fej 2) 0)
+            fej
+            0
+        )
+        farok-ertek)]))
+             
+(writeln (addparos (list 1 2 6 4)))      
+        
+(define (addparatlan feltetel lst)
+    (cond
+    [(empty? lst) 0]
+    [else
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek (addparatlan feltetel farok))
+        (+ 
+        (if(feltetel fej)
+            fej
+            0
+        )
+        farok-ertek)]))  
+        
+(define lst (list 1 2 6 9))
+(writeln (addparatlan odd? lst))
+        
+(define (mymax lst)
+    (cond
+    [(empty? lst) (void)]
+    [(= 1 (length lst)) (first lst)]
+    [else
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek (mymax farok))
+            
+        ;pelda: (mymax (list 6 4 8)) = 8 ; farok-ertek
+        ;       (mymax (list 4 8)) = 8  ; farok ertek
+        ;pelda2:(mymax (list 12 6 4 8)) = 12 ; fej
+        ;       (mymax (list 6 4 8)) = 8  ; farok ertek
+        
+        (if(< farok-ertek fej)
+            fej
+            farok-ertek)]))
+            
+(writeln (mymax (list 2 4)))
+
+;odd-filter visszaadja a listat csak a paraltan szamokkal
+
+(define (odd-filter feltetel lst)
+    (cond
+    [(empty? lst) null]
+    [else 
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek (odd-filter feltetel farok))
+        (if(feltetel fej)
+            (cons fej farok-ertek)
+            farok-ertek
+        )]))
+        
+(writeln (odd-filter odd? (list 2 3 14 15 4 17 21 1 6)))
+
+(define (myappend lst lst1) (cons lst lst1))
+    
+(writeln (list 2 3 14 15 4 17 21 1 6) (list 2 3 14 15 4 17 21 1 6))
+
+-----------------------------------------------------------------------------
+
+;(cons fej farok): visszaad egy uj listat, aminek a feje fej farka a farok
+;pl:
+(define A (list 2 3 4));
+(writeln (cons 1 A))
+
+;append A B receptje: 
+;Az A-t szedem szet, ha A ures akkor az eredmeny B
+
+(writeln (append empty (list 3 4 5)))
+
+;Ha A nem ures, akkor szetszedem fejre es farokra 
+;reku hivas
+;farok erteke ele odateszem fejA-t a conssal
+
+(define (my-append A B)
+    (cond
+        [(empty? A) B]
+        [else
+            (define fej (first A))
+            (define farok(rest A))
+            (define farok-ertek (my-append farok B))
+            (cons fej farok-ertek)]))
+            
+(define B (list 2 3 1 7 8)); 
+(writeln (my-append A B));
+
+;paros-filter lst
+;hint: even? x igaz, ha x paros
+;ha ures , akkor ures listat ad vissza
+;ha nem ures szetszedem fejre es farokra
+;rekuval kiszamolom farok-erteket
+;ha a fej [paros akkor megtartom egyebkent eldobom
+
+(define (odd-filter feltetel lst)
+    (cond
+    [(empty? lst) (list )]
+    [else 
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek (odd-filter feltetel farok))
+        (if(feltetel fej)
+            (cons fej farok-ertek)
+            farok-ertek
+        )]))
+
+(writeln (odd-filter odd? (list 2 3 14 15 4 17 21 1 6)))
+
+;halmaz
+;nics kulon halmaz adatszerk,a listat hasznalom halmazkent,
+;ha listakent hasznalom akor a sorrend mindegy azaz:
+;(list 2,3,4) = (list 4,3,2) (mindegy a sorrend)
+; a gyakorisag sem szamit, ezert ezek egyenloek:
+;(list 1 2 3) = (list 1 2 1 2 3 3)
+
+;halmaz kezeles alapmuvelete, az eleme-e (is-member?)
+;a beepitett fgv neve: memeber
+;ketparameteres (member x lst) megnezi hogy az x elem, benne van e az lst-be.
+;egy kicsit fura
+
+;ami nem false az true
+
+(define (eleme-e x lst)
+    (if(member x lst)
+        true
+        false))
+
+; ha valami nem false akkor az true!!!!!!!!!!!!!!!!!!!!!!!!
+        
+(writeln (eleme-e 1 (list 1 1 3))) 
+
+(writeln (eleme-e 5 (list 1 1 3))) 
+
+;minden halmaz muveletet a member-re vezetek vissza
+
+;(instersection A B) visszaadja a metszetben levo elemeket,azaz azokat az elemeket
+;amelyek benne vannak A-ba es B-be is
+;(intersection empty B) = empty 
+;ha nem ures az A, akkor szetszedem fejre es farokra
+;ha a fej benne van a B-be akkor megtartom, kulonben eldobom
+             
+(define (intersection A B)
+    (cond
+    [(empty? A) (list )]
+    [else 
+        (define fej (first A))
+        (define farok(rest A))
+        (define farok-ertek (intersection farok B))
+        (if(eleme-e fej B)
+            (cons fej farok-ertek)
+            farok-ertek
+        )]))
+        
+(define A (list 2 3 8)); 
+(define B (list 2 3 1 7 8)); 
+(writeln A)
+(writeln B)
+(writeln (intersection A B))
+
+(define (unio A B)
+    (cond
+    [(empty? A) B]
+    [else 
+        (define fej (first A))
+        (define farok(rest A))
+        (define farok-ertek (unio farok B))
+        (if(member fej B)
+            farok-ertek
+            (cons fej farok-ertek)
+        )]))
+        
+(writeln (unio A B))
+
+;(subset (list 1 2) (list 2 5 1 3)) = igaz
+
+(define (subset A B)
+    (cond
+    [(empty? A) true]
+    [else 
+        (define fej (first A))
+        (define farok(rest A))
+        (define farok-ertek (subset farok B))
+        (if(member fej B)
+            farok-ertek
+            false
+        )
+        
+        ]))
+               
+        ;pelda: (subset (list 1 2) (list 2 5 1 3)) = igaz ; farok-ertek
+        ;       (subset (list 2 ) (list 2 5 1 3)) = igaz  ; farok-ertek
+        ;       (subset (list  ) (list 2 5 1 3)) = igaz  ; farok-ertek
+        ;pelda2:(subset (list 1 8) (list 2 5 1 3)) = hamis ;  
+        ;       (subset (list 8 ) (list 2 5 1 3)) = igaz  ; farok-ertek
+        
+(writeln (subset (list 1 2) (list 2 5 1 3)))
+
+(define (set-equ A B)
+        (if (and (subset A B) (subset B A))
+                true
+                false))
+        
+(writeln (set-equ (list 1 2) (list 1 2 2 1 1 2)))
+
+;mymember x lst  : igazat ad, ha x benne van lst-ben
+
+(define (my-member x A)
+    (cond
+    [(empty? A) false]
+    [else 
+        (define fej (first A))
+        (define farok(rest A))
+        (define farok-ertek (my-member x farok))
+        (if (= fej x)
+            true
+            farok-ertek
+        )]))
+
+(writeln (my-member 3 (list 1 2 2 1 1 2)))
+
+------------------------------------------------------------------
+
+; ismétlés:
+; (cons fej farok): visszaad egy új listát, aminek feje fej, fara farok
+; pl:
+(writeln (cons 1 (list 2 3)))
+; append A B receptje:
+; Az A-t szedem szét
+; ha A üres, akkor az eredmény: B
+(writeln (append empty (list 3 4 5)))
+; Ha A nem üres, akkor szétszedem fejre és farokra
+; reku hívás, ennek az eredményét beteszem farok-érték-be
+; farok erte elé odateszem a fejA-t a cons-sal
+
+(define (my-append A B)
+    (cond
+        [(empty? A) B]
+        [else 
+            (define fejA    (first A))
+            (define farokA (rest A))
+            (define farok-ertek (my-append farokA B))
+            ; megtartom a fejet
+            (cons fejA farok-ertek)]))
+            
+(writeln (my-append (list 1 2 3) (list 4 5 6)))
+
+; páros-filter lst: kiszűri a páros számokat, azokat egy listaként adja vissza
+; hint: even? x, igaz ha x páros
+; ha üres akkor üres listát ad vissza
+; ha nem üres szétszedem fejre és farokra
+; rekuval kiszámolom farok-értékét
+; ha a fej páros, akkor megtartom, egyébként eldobom, azaz csak a farok-értékét adom vissza
+
+(define (páros-filter lst)
+    (cond
+        [(empty? lst) empty]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-érték (páros-filter farok))
+            (if (even? fej)
+                ; igaz ágban megtartom
+                (cons fej farok-érték)
+                ; hamis ágban eldobom
+                farok-érték)]))
+(writeln (páros-filter (list 1 2 3 4 5 6)))
+
+; Új anyag:
+; nincs külön halmaz adatszerk, a listát használom halmazként
+; ha listaként használom, akkor a sorrend mind1, azaz
+; (list 1 2 3) == (list 3 2 1), mert mindegy a sorrend 
+; (list 1 2 3) == (list 2 1 3), mert a sorrend nem számít
+; a gyakoriság sem számít, ezért, mint halmaz, ezek egyenlőek:
+; (list 1 2 3) == (list 1 2 1 3 1 2), mert teljesen mindegy hányszor vannak benne az értékek
+; halmaz kezelés alapművelete, az: eleme-e
+; angolul: is-member
+; beépített fgv neve: member
+; két paraméteres: (member x lst)
+; megnézi, hogy az x elem benne van-e az lst-ben
+; egy kicsit furán működik, de azért jó:
+(writeln (member 1 (list 2 1 3)))
+(writeln (member 5 (list 2 1 3)))
+; a hülye racketben sémákban illetve list-ben ami nem false az true
+(define (eleme-e x lst)
+    (if member x lst)
+    true
+    false)
+(writeln (eleme-e 1 (list 2 1 3)))
+(writeln (eleme-e 5 (list 2 1 3)))
+; ha valami nem false akkor az true
+; minden halmaz műveletet a member-re vezetünk vissza
+; (intersection A B) visszaadja a metszetben lévő elemeket, azaz azokat az elemeket amik benne vannak A-ban is és B-ben is 
+; (intersection empty B) = empty
+; ha nem üres az A, akkor szétszedem fejre és farokra
+; ha a fej benne van a B-ben, akkor megtartom, egyébként eldobom
+; feladat: írjátok meg az intersection-t
+
+(define (intersection A B)
+    (cond
+        [(empty? A) empty]
+        [else
+            (define fejA (first A))
+            (define farokA (rest A))
+            (define farok-érték (intersection farokA B))
+            (if (member fejA B)
+                (cons fejA farok-érték)
+                farok-érték)]))
+                
+(writeln (intersection (list 1 2 3) (list 2 3 4)))
+
+; ha fejA benne van B-ben, akkor eldobom,
+; mert felesleges, hogy kétszer legyen benne az eredmény
+; (unio A B), azok az elemek amik vagy A-ban vagy B-ben szerepelnek
+
+; részhalmaz A B
+; (subset A B): igazat ad, ha A minden eleme benne van B-ben,
+; egyébként hamisat
+; (subset (list 1 2) (list 2 5 1 3)) = igaz
+; minden halmaz művelet a member-re vezetünk vissza
+; az üres lista minden listának, pl: az üres listának is, a részhalmaza
+
+(define (subset A B)
+    (cond
+        [(empty? A) true]
+        [else
+            (define fejA (first A))
+            (define farokA (rest A))
+            (define farok-érték(subset farokA B))
+            (if (member fejA B)
+                farok-érték
+                false)]))
+                
+(writeln (subset (list 1 2 6) (list 2 5 1 3)))
+; halmaz egyenlőség
+; angolul: (set-equ A B), ez akkor ad vissza igazat, ha A részhalmaza B-nek, és
+; B részhalmaza A-nak
+; hint: itt nem kell reku, csak két hívás és egy and
+
+(define (set-equ A B) (and (subset A B) (subset B A)))
+(writeln (set-equ (list 1 2 3) (list 2 1 1 3 2 1 2 3 1)))
+; kevesebb mint 8perc alatt, írjunk saját member-t
+; (my-member x lst):
+; hint ha lst feje = x, akkor return true
+
+(define (my-member x lst)
+    (cond
+        [(empty? lst) false]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-érték (my-member x farok))
+            (if (= fej x)
+            true
+            farok-érték)]))
+            
+; akkumulátor
+; az akku az egy plusz egy paramétert amiben gyüjtöm a részeredményt
+; ha vége a rekurziónak akkor az akkuban van az utolso részeredmény azaz a végeredmény/visszatérési érték
+; pl
+; sum simán
+
+(define (sum lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (sum farok))
+            (+ fej farok-ertek)]))
+(writeln (sum (list 1 2 3 4)))
+
+; sum akkuval
+; két verzió kell
+; 1 paramos és 2 paramos
+; 1 paramos hívja a 2 paramosat úgy hogy megadja az akku kezdőértékét
+; az akku kezdőértéke az amit simán az üres listára ad vissza, mert a lista lehet rögtön üres
+
+(define (sum-v2 lst) (sum-akkus lst 0))
+(define (sum-akkus lst akku)
+    (cond
+        ; recept: ha üres a lista akkor az akkut kell visszaadni
+        [(empty? lst) akku]
+        ; ha nem üres azaz else ág akkor szétszedem fejre és farokra
+        ; nem farok-értéket sdzámolok hanem akku2
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            ; recept: akku 2t ugy szűmolok mint sima utolsó sora de farok-ertel -> akku
+            (define akku2 (+ fej akku))
+            ; reku hívás farokkal és akku2vel
+            (sum-akkus farok akku2)]))
+(writeln (sum-v2 (list 1 2 3 4)))
+
+; páros filter sima
+
+(define (páros-filter-v1 lst)
+    (cond
+        [(empty? lst) empty]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-érték (páros-filter-v1 farok))
+            (if (even? fej)
+                (cons fej farok-érték)
+                farok-érték)]))
+(writeln (páros-filter-v1 (list 1 2 3 4 5 6)))
+
+; páros filter akkuval
+
+(define (paros-filter-v2 lst) (reverse (paros-filter-akkus lst empty)))
+(define (paros-filter-akkus lst akku)
+    (cond
+        [(empty? lst) akku]
+        [else 
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define akku2 (if (even? fej)
+                (cons fej akku)
+                akku))
+            (paros-filter-akkus farok akku2)]))
+(writeln (paros-filter-v2 (list 1 2 3 4 5 6)))
+
+; paros sum sima
+
+(define (psum-v1 lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (psum-v1 farok))
+            (if (even? fej) (+ fej farok-ertek) farok-ertek)]))
+(writeln (psum-v1 (list 1 2 3 4)))
+
+; paros sum akkus
+
+(define (psum-v2 lst) (psum-akkus lst 0))
+(define (psum-akkus lst akku)
+    (cond
+        [(empty? lst) akku]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define akku2 (if (even? fej) (+ fej akku) akku))
+            (psum-akkus farok akku2)]))
+(writeln (psum-v2 (list 1 2 3 4)))
+
+; miért szeretjük az akkut? 
+; azért mert az utolsó hívás így reku hívás
+; az jó mert az farok reku
+; def farok reku: azt mondjuk hogy f fgv farok reku <=> az f utolsó hívása reku
+; a farok reku jó mert abbol ciklust lehet fordítani, azaz egyesíti a két módszer előnyét
+; a reku és a ciklus ugyasn olyan erős programozói eszköz
+; amit meg lehet oldani ciklussal azt meg lehet oldani rekuval és fordítva
+; csakhogy a reku magasabb absztrakciós szinten van, 
+; közelebb áll a matematikai megfogalmazáshoz és gyakran könyebb megérteni
+; hátránya: minden hívás vermet foglal, intenzív memória használat
+; ezzel szemben a ciklus gyors, nem használ vermet
+; hátránya: alacsonyabb absztrakciós szint, azaz nehezebb megérteni
+; a kettő előnyét eggyesíti a farok reku, mert továbbra is reku, magas absztrakció, de nem használ memóriát
+
+; subset akkus
+
+(define (subset-v2 A B) (subset-akkus A B true))
+(define (subset-akkus A B akku)
+    (cond
+        [(empty? A) akku]
+        [else
+            (define fejA (first A))
+            (define farokA (rest A))
+            (define akku2 (if (member fejA B)
+                akku
+                false))
+            (subset-akkus farokA B akku2)]))
+(writeln (subset-v2 (list 1 2 6) (list 2 5 1 3)))
+
+-------------------------------------------------------------------------------------------------------------------------
+
