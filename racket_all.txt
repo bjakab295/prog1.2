@@ -780,3 +780,117 @@
 
 -------------------------------------------------------------------------------------------------------------------------
 
+; match - pattern matching - minta illesztés
+; nagyon jó dolog, mert van mellék hatása, azaz valami értéket kap
+; szintaxisa:
+; (match kif
+;   [minta1 kif-ha-minta1re-illeszkedik-kif-értéke]
+;   [minta2 kif-ha-minta2re-illeszkedik-kif-értéke]
+;   ...
+;   [else kif egyebként]
+; szemantika: az első olyan ág fut le, ahol a kif értéke illeszkedik a mintára
+; ami nagyon fontos, mellékhastásként a mintában levő változók értéket kapnak
+
+(define (proba1)
+    (match (list 1 2 3 ) [(list 1 x 3) x]))
+(writeln (proba1))
+
+(define (proba2 lst)
+    (match lst [(list 1 x 3) x]))
+(writeln (proba2 (list 1 2 3)))
+
+(define (proba3 lst)
+    (match lst [(cons fej farok) fej]))
+(writeln (proba3 (list 1 2 3)))
+; van egy kis érzéki csalódás, a (list 1 2 3) lényegében azt jelenti hogy, (cons 1 (cons 2 (cons 3 empty)))
+
+(writeln (first (list 4 5 6)))
+(writeln (second (list 4 5 6)))
+(writeln (third (list 4 5 6)))
+
+(define (myfirst lst)
+    (match lst
+        [(list ) void]
+        [(cons fej _) fej])); _ = placeholder - név nélküli név
+(writeln (myfirst (list "alma" "péter" 12)))
+
+(define (mysecond lst)
+    (match lst
+        [(list ) void]
+        [(cons _ (cons fej _)) fej])); _ = placeholder - név nélküli név
+(writeln (mysecond (list "alma" "péter" 12)))
+
+(define (mythird lst)
+    (match lst
+        [(list ) void]
+        [(cons _ (cons _ (cons fej _))) fej])); _ = placeholder - név nélküli név
+(writeln (mythird (list "alma" "péter" 12)))
+
+; (map f lst) : az lst minden elemére meghívja f et, az így előálló listát adja vissza
+
+(define (mymap func lst)
+    (if (empty? lst)
+    empty
+    (cons (func (first lst)) (map func (rest lst)))))
+(writeln (mymap add1 (list 1 2 3 4)))
+
+(define (lenght-v1 lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (lenght-v1 farok))
+            (+ farok-ertek 1)]))
+            
+(define (lenght-v2 lst)
+    (match lst
+        [(list ) 0]
+        [(cons fej farok)
+            (define farok-ertek (lenght-v2 farok))
+            (+ farok-ertek 1)]))
+            
+(define (sum lst)
+    (match lst
+        [(list ) 0]
+        [(cons fej farok)
+            (define farok-ertek (sum farok))
+            (+ farok-ertek fej)]))
+            
+; magasabb rendű fgvk
+; azt mondjuk, hogy egy fgv magasabb rendű ha van fgv paramja
+; legegyszerűbb: filter
+
+(define (myfilter func lst)
+    (cond
+        [(empty? lst) empty]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (myfilter func farok))
+            (if (f fej)
+                (cons fej farok-ertek)
+                farok-ertek)]))
+
+; a reduce a map mellett a másik olyan magasabb rendű fgv amivel sok mindent ki lehet váltani
+; eredetileg arra találták ki hogy a sumot lehessen könnyen megírni
+; aztán kiderűlt hogy általános és sok mindenre jó
+; szintaxisa: (reduce f érték-ha-üres lst)
+
+(define (reduce f akku lst)
+    (cond
+        [(empty? lst) akku]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (reduce f akku farok))
+            (f fej farok-ertek)]))
+(define (add x y) (+ x y))
+(writeln (reduce add 0 (list 1 2 3)))
+
+(define (lenght-v3 lst)
+    (define (fura-inc x y) (+ y 1))
+    (reduce fura-inc 0 lst))
+    
+----------------------------------------------------------------------------------
+
