@@ -894,3 +894,79 @@
     
 ----------------------------------------------------------------------------------
 
+import java.util.ArrayList;
+
+public class Main2 {
+    public static void main (String[] args) {
+        ArrayList<Integer> list1 = new ArrayList<>();
+        list1.add(1); list1.add(2); list1.add(3);
+        int szum = list1.stream().reduce(0, (a, b) -> a + b).intValue();
+        System.out.println("szum = " + szum);
+        // lambda notation-nel név nélküli
+        // fgv lehet létrehozni
+        // matematikai syntax: lambda x.x+1
+        // racketben: (lambda (x) (+ x 1))
+        // javaban x->x+1
+        // stream
+        // C#ban x=>x+1
+        // LINQ
+        list1.stream()
+                .map(x->x+1)
+                .filter(x->x%2==0)
+                .forEach(x-> {System.out.println(x);});
+        // minden collection-ből lehet csinálni streamet
+        // szintaxisa:
+        // param -> utasítás, pl x->x+1
+        // (paramlist) -> utasítás
+        // (paramlist) -> {blokk)
+        // () -> {blokk}
+
+        System.out.println();
+
+        ArrayList<String> nevek = new ArrayList<>();
+        nevek.add("Krisztián");
+        nevek.add("Kristóf");
+        nevek.add("Balázs");
+        //irassuk ki a leghoszabb nevet map meg ilyenek segítségével
+        nevek.stream().map(String::length).forEach(x-> System.out.println(x));
+
+        int maxHossz = nevek.stream().map(String::length).sorted().toList().get(nevek.size()-1);
+        System.out.println("maxHossz = " + maxHossz);
+
+        int index = nevek.stream().map(String::length).toList().indexOf(maxHossz);
+        String legHosszabbNév = nevek.get(index);
+        System.out.println("legHosszabbNév = " + legHosszabbNév);
+        nevek.stream().sorted(String::compareTo).forEach(x-> System.out.println(x));
+        
+        // valahol a végén for ciklust kell írni, mind1 hány réteged van, hány interfacet használsz,
+        // mind1 milyen objektum orientált varászlatot használsz, a vége for ciklus
+        
+    }
+}
+
+-------------------------------------------------------------------------------
+
+; mi is az a reduce
+; a listán elfogyasztom egy 2 param fgv
+; az elsőó param a lista feje, a második az eddigi részeredmény
+; kell neutrtális elem is, mert az első lefutásnál még nincs részeredmény
+; racketben nem reducenak hyvják hanem foldl nek
+; első körben csinálunk egy aliaszt, hogy legyen reduce
+; (map f list), ahol f egy bármely 1 param fgv
+; (reduce p lst), ahol p egy bármely 1 param predikátum (igaz hamisat ad vissza)
+(define (reduce f2 neutral list) (foldl f2 neutral list))
+; mire jó a reduce? könnyű megyírni a sumot!!!!!!
+(define (add a b) (+ a b))
+(define (sum lst) (reduce add 0 lst))
+(writeln (sum (list 3 5 2)))
+
+; (filter p lst): kiszűri az lst azon elemeit amire p igazat ad
+(writeln (filter even? (list 2 3 4 5 6 7 8)))
+
+(define (my-filter p lst)
+    (define (megtart-ha-igaz-p x A)
+        (if (p x) (append A (list x)) A))
+    (reduce megtart-ha-igaz-p empty lst))
+(writeln (my-filter even? (list 2 3 4 5 6 7 8)))
+
+----------------------------------------------------------------------------
