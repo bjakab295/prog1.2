@@ -970,3 +970,103 @@ public class Main2 {
 (writeln (my-filter even? (list 2 3 4 5 6 7 8)))
 
 ----------------------------------------------------------------------------
+
+(define matrix (list (list 1 2 3) (list 4 5 6)))
+
+(define (oszlop m i)
+    (define (at-i lst) (list-ref lst i))
+    (map at-i matrix))
+(define (transpond m)
+    (define (oszlop-m i) (oszlop m i))
+    (define indices (for/list ([x (length (first m))]) x))
+    (map oszlop-m indices))
+(writeln (transpond matrix))
+
+;; Mátrix szorzás
+
+(define a (list '(1 0 0) '(0 1 0) '(0 0 1)))
+(define b (list '(1 2 3) '(4 5 6) '(7 8 9)))
+
+(define (transpose m)
+  (apply map list m))
+(writeln (transpose b))
+
+(define (dotprod la lb)
+  (apply + (map (lambda (a b) (* a b)) la lb)))
+(writeln (dotprod '(1 2 3) '(1 2 3)))
+
+(define (mmul ma mb)
+  (define (foreachrow r)
+    (map (lambda (c) (dotprod c r)) (transpose mb)))
+  (map foreachrow ma))
+(mmul a b)
+
+---------------------------------------------------------------------------------
+
+;1. zh cuccok referencianak
+; 1
+(writeln "problem 1")
+(define (fact x)
+  (if (equal? x 0)
+      1
+      (* x (fact (- x 1)))))
+(writeln (fact 5))
+
+;2
+(writeln "problem 2")
+(define (paros-length l)
+  (define (true? x) (equal? x #t))
+  (count true? (map even? l)))
+
+(writeln (paros-length '()))
+(writeln (paros-length '(1)))
+(writeln (paros-length '(1 2)))
+(writeln (paros-length '(1 2 3 4 5)))
+
+;3
+(writeln "problem 3")
+(define (paros-length2 l)
+  (define (f acc l)
+  (match l
+    ['() acc]
+    [(list-rest h t)
+     (if (even? h)
+         (f (+ 1 acc) t)
+         (f acc t))]))
+  (f 0 l))
+(writeln (paros-length2 '()))
+(writeln (paros-length2 '(1)))
+(writeln (paros-length2 '(1 2)))
+(writeln (paros-length2 '(1 2 3 4 5)))
+
+;5
+(writeln "problem 5")
+(define (pmap p f lst)
+  (define (ff x) (if (p x) (f x) x))
+  (map ff lst))
+(define (inc x) (+ 1 x))
+(writeln (pmap even? inc (list 1 2 3 4)))
+(writeln (pmap odd? inc (list 1 2 3 4)))
+
+;4
+(writeln "problem 4")
+(define (flat l)
+  (match l
+    ['() '()]
+    [(cons (cons hh tt) t) (flat (append (list hh) tt t))]
+    [(cons h t) (cons h (flat t))]
+    ))
+(writeln (flat '()))
+(writeln (flat (list '())))
+(writeln (flat (list (list '()))))
+(writeln (flat (list 1)))
+(writeln (flat (list 1 2)))
+(writeln (flat (list 1 2 (list 3 (list 4 5)) 6 7)))
+(writeln (flat (list 1 (list 2 3 (list 4 5) 6 (list 7 8) ) )))
+
+;6
+(define (mmap f l)
+  (define (ff a b)
+    (cons (f a) b))
+  (foldr ff '() l))
+(writeln (mmap (lambda (x) (+ 1 x)) '(1 2 3)))
