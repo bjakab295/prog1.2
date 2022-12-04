@@ -1,0 +1,321 @@
+------------LENGTH------------
+
+(define (length lst)
+    (cond        
+        [(empty? lst) 0]
+        [else            
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (length farok)) 
+            (+ 1 farok-ertek)]))
+(writeln (length (list 5 4 7)))
+
+
+
+------------SUM------------
+
+(define (sum param1)
+    (cond
+        [(empty? param1) 0]
+        [else
+            (define fej (first param1))
+            (define farok (rest param1))
+            (define farok-ertek (sum farok))
+            (+ fej farok-ertek)]))
+(writeln (sum (list 5 4 7)))
+
+
+
+------------PROD------------
+
+(define (prod lst)
+    (cond
+        [(empty? lst) 1]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (prod farok))
+            (* fej farok-ertek)]))
+(writeln (prod (list 2 3 6)))
+
+
+------------MAX------------
+
+(define (max-v2 lst)
+    (cond
+        [(empty? lst) +nan.0]
+        [(= (length lst) 1) (first lst)]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (max-v2 farok))
+            (if (> fej farok-ertek) fej farok-ertek)]))
+(writeln (max-v2 (list 1 2 3)))
+
+
+------------MIN------------
+
+(define (min-v2 lst)
+    (cond
+        [(empty? lst) +nan.0]
+        [(= (length lst) 1) (first lst)]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (min-v2 farok))
+        (if (< fej farok-ertek) fej farok-ertek)]))
+(writeln (min-v2 (list 1 2 3)))
+
+
+
+------------ELEME------------
+
+(define (eleme x lst)
+    (cond
+        [(empty? lst) #f]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (eleme x farok))
+            (if (= x fej) #t farok-ertek)]))
+            
+(writeln (eleme 1 (list 1 2 3)))
+
+
+------------ELEME(Match)------------
+
+(define (eleme x lst)
+    (match lst
+        [(list ) #f]
+        [(cons fej farok)
+            (if (= fej x) #t
+                    (eleme x farok))]))
+(writeln (eleme 5 (list 1 2 3 4 5 )))
+
+
+------------COUNT-EVEN------------
+
+(define (count-even lst)
+    (cond
+        [(empty? lst) 0]
+        [else
+            (define fej (first lst))
+            (define farok (rest lst))
+            (define farok-ertek (count-even farok))
+            (if (even? fej)
+                (+ 1 farok-ertek)
+                farok-ertek)]))
+(writeln (count-even (list 2 3 4)))
+
+
+
+------------COUNT-EVEN(Match)------------
+
+(define (count-even lst)
+    (match lst                  
+        [(list ) 0]             
+        [(cons fej farok)
+            (define farok-ertek (count-even farok))
+            (if (even? fej)
+                (+ 1 farok-ertek)
+                farok-ertek)]))
+(writeln (count-even (list 2 3 4)))
+
+
+
+------------SUBSET------------
+
+(define (subset A B)
+  (match A
+    [(list ) #t]
+    [(cons fejA farokA)
+	(define farok-ertek (subset farokA B))
+	(if (and (eleme fejA B) farok-ertek)
+	  #t
+	  #f)]))
+(writeln (subset (list 2 3) (list 2 3 4)))
+
+
+------------UNIO------------
+
+(define (unio A B)
+   (match A
+	[(list ) B]
+	[(cons fejA farokA)
+	     (define farok-ertek (unio farokA B))	
+	     (if (eleme fejA B) 
+		farok-ertek
+		(cons fejA farok-ertek))]))
+(writeln (unio (list 1 3) (list 2 4 5)))
+
+
+------------MERGE------------
+
+(define (merge A B)
+    (cond
+    [(empty? A) B]
+    [(empty? B) A]
+    [else
+        (define fejA (first A))
+        (define fejB (first B))
+        (define farokA (rest A))
+        (define farokB (rest B))
+(writeln (merge (list 1 2 5) (list 3 4 6)))
+
+
+-----------POWERSET----------
+
+(define (powerset A)
+    (match A
+        [(list ) (list (list ))]
+        [(cons head tail)
+            (define powerfel (powerset tail))
+            (define powerfel2 (beszurfej head powerfel))
+            (append powerfel powerfel2)]))
+(writeln (powerset (list 1 2 3)))
+
+
+------------SETMINUS------------
+
+(define (setminus A B)
+    (cond
+        [(empty? A) (list )]
+        [else
+            (define fejA (first A))
+            (define farokA (rest A))
+            (define farok-ertek (setminus farokA B))
+            (if (not (member fejA B)) (cons fejA farok-ertek) farok-ertek)]))
+(writeln (setminus (list 1 2 4 5) (list 2 4 2)))
+
+---------------FAROK REKURZIV-----------------
+
+----FAROK REKU SUM----
+
+define (sum2 lst) (farok-reku-sum 0 lst))
+(define (farok-reku-sum akku lst)
+    (cond
+        [(empty? lst) akku]
+        [else
+        (define fej (first lst))
+	    (define farok (rest lst))
+	    (define akku2 (+ fej akku))
+	    (farok-reku-sum akku2 farok)]))
+(writeln (sum2 (list 1 8 5)))
+
+----FAROK REKU PROD-----
+
+(define (prod2 lst) (farok-reku-prod 1 lst))
+(define (farok-reku-prod akku lst)
+	(cond
+	    [(empty? lst) akku]      
+	    [else
+		   (define fej (first lst))
+		   (define farok (rest lst))
+		   (define akku2 (* fej akku))
+		   (farok-reku-prod akku2 farok)]))
+(writeln (prod2 (list 3 6 4)))
+
+
+----FAROK REKU UNIO----
+
+(define (unio A B)
+    (cond
+        [(empty? A) B]
+        [else
+            (define fejA (first A))
+            (define farokA (rest A))
+            (define farok-ertek (unio farokA B))
+            (if (member fejA B) farok-ertek
+                (cons fejA farok-ertek))]))
+(writeln (unio (list 1 2 3) (list 2 3 4)))
+
+----UNIO2----
+
+(define (unio2 A B) (farok-reku-unio B A B))
+(define (farok-reku-unio akku A B)
+    (cond
+        [(empty? A) akku]
+        [else
+            (define fejA (first A))
+            (define farokA (rest A))
+            (define akku2
+                (if (member fejA B) akku
+                    (cons fejA akku)))
+            (farok-reku-unio akku2 farokA B)]))
+(writeln (unio2 (list 1 2 3) (list 2 3 4)))
+
+--------------------------------------------------------------------------------------
+
+;1
+;my-lenghth + formázott kiírás:
+
+(define (my-length lst)
+  (cond
+    [(empty? lst) 0]
+    [else (+ 1 (my-length (rest lst)))]))
+(writeln (string-append "A lista hossza: " (number->string (my-length (list 1 2 5)))))
+
+;2 my-paros-max + formázott kiírás
+;a listában lévő páros számok közül adja vissza a legnagyobbat
+; ha a lista üres, vagy nincs benne páros szám, akkor +nan.0-t ad vissza
+; (writeln (my-paros-max (list 2 7 6))) = "A legnagyobb páos szám: 6"
+
+
+(define (paros? ertek)
+  (= 0 (modulo ertek 2)))
+
+(define (my-paros-max lst)
+  (cond
+    [(empty? lst) +nan.0]
+    [(empty? (rest lst)) (if (paros? (first lst)) (first lst) 0)]
+    [else
+       (define fej (first lst))
+       (define farok (rest lst))
+       (define farok-ertek (my-paros-max farok))
+       (if (and (paros? fej) (> fej farok-ertek))
+              fej farok-ertek)]))
+(writeln (string-append "A legnagyobb páros szám: " (number->string (my-paros-max (list -2 1)))))
+
+;3 lista->páratlanok-halmaza
+;a listában lévő páratlan számok halmazát adja vissza, formázott kiírás nem kell
+
+(define(lista->páratlanok-halmaza lst)
+    (cond
+        [(empty? lst) empty]
+        [else
+        (define fej (first lst))
+        (define farok(rest lst))
+        (define farok-ertek(lista->páratlanok-halmaza farok))
+        (if (member fej farok)
+               farok-ertek
+                 (if ( = 1(modulo fej 2))
+                     (cons fej  farok-ertek)
+                         farok-ertek))]))
+                             
+(writeln (lista->páratlanok-halmaza (list 1 2 1 3 4 1 2)))
+
+;4 my-reverse: kap egy listát és megfordítja, ne használjon akku-t
+
+(define (my-reverse lst)
+  (cond
+    [(empty? lst) empty]
+    [else
+     (define fej (first lst))
+     (define farok (rest lst))
+     (define farok-ertek (my-reverse farok))
+     (append farok-ertek (list fej))]))
+(writeln (my-reverse (list 1 2 3)))
+
+;5 my-reverse akkuval
+
+(define (my-reverse-akku lst) (my-reverse-akku2 empty lst))
+
+(define (my-reverse-akku2 akku lst)
+  (cond
+    [(empty? lst) akku]
+    [else
+     (define fej (first lst))
+     (define farok (rest lst))
+     (define uj-akku (append (list fej) akku))
+     (my-reverse-akku2 uj-akku farok)]))
+(writeln (my-reverse-akku (list 1 2 3)))
